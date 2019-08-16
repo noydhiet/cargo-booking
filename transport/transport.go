@@ -15,7 +15,7 @@ import (
 )
 
 type AphService interface {
-	GetStatusDeliveryService(context.Context, dt.Delivery) []dt.Delivery
+	GetBookingService(context.Context, dt.Delivery) []dt.Delivery
 }
 
 type aphService struct {
@@ -42,7 +42,7 @@ func makeBookingEndpoint(aph AphService) endpoint.Endpoint {
 		paramDel.LAST_KNOWN_LOCATION = req.LAST_KNOWN_LOCATION
 		paramDel.ID_ITENARY = req.ID_ITENARY
 		paramDel.ID_ROUTE = req.ID_ROUTE_SPEC
-		aph.GetStatusDeliveryService(ctx, paramDel)
+		aph.GetBookingService(ctx, paramDel)
 		return dt.GetBookingResponse{
 			// ID_DELIVERY:         1,
 			// ROUTE_ID:            1,
