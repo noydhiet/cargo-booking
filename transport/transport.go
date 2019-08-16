@@ -17,7 +17,7 @@ import (
 type AphService interface {
 	HelloWorldService(context.Context, string) string
 	HelloDaerahService(context.Context, string, string, string) string
-	GetItenaryService(context.Context, string, string, string) string
+	GetItenaryService(context.Context, int, string, string) string
 }
 
 type aphService struct{}
@@ -68,7 +68,7 @@ func call_ServiceHelloDaerah(name, jenis_kelamin, asal_kota string) string {
 func makeHelloDaerahEndpoint(aph AphService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(datastruct.HelloDaerahRequest)
-		// logging.Log(fmt.Sprintf("Name Request %s", req.NAME))
+		//logging.Log(fmt.Sprintf("Name Request %s", req.NAME))
 		z := aph.HelloDaerahService(ctx, req.NAME, req.JENIS_KELAMIN, req.ASAL_KOTA)
 		// logging.Log(fmt.Sprintf("Response Final Message %s", z))
 		return datastruct.HelloDaerahResponse{200, z}, nil
@@ -93,7 +93,7 @@ func (aphService) GetItenaryService(_ context.Context, voyage_number int, unload
 }
 func call_ServiceGetItenary(voyage_number int, unload_location, load_location string) string {
 
-	messageResponse := service.GetItenary(voyage_number, unload_location, load_location, load_time, unload_time)
+	messageResponse := service.GetItenary(voyage_number, unload_location, load_location)
 
 	return messageResponse
 
@@ -101,10 +101,10 @@ func call_ServiceGetItenary(voyage_number int, unload_location, load_location st
 func makeGetItenaryEndpoint(aph AphService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(datastruct.GetItenaryRequest)
-		// logging.Log(fmt.Sprintf("Name Request %s", req.NAME))
-		z := aph.GetItenaryService(ctx, req.voyage_number, req.unload_location, req.load_location)
-		// logging.Log(fmt.Sprintf("Response Final Message %s", z))
-		return datastruct.GetItenaryResponse{200, z}, nil
+		logging.Log(fmt.Sprintf("Name Request %s", req.VOYAGE_NUMBER, req.UNLOAD_LOCATION, req.LOAD_LOCATION))
+		k := aph.GetItenaryService(ctx, req.VOYAGE_NUMBER, req.UNLOAD_LOCATION, req.LOAD_LOCATION)
+		logging.Log(fmt.Sprintf("Response Final Message %s", k))
+		return datastruct.GetItenaryResponse{k}, nil
 	}
 }
 func decodeGetItenaryRequest(_ context.Context, r *http.Request) (interface{}, error) {

@@ -49,7 +49,7 @@ func HelloDaerah(name, jenis_kelamin, asal_kota string) string {
 	helloOutput = fmt.Sprintf("%s %s %s", asal_kota, jenis_kelamin, name)
 	return helloOutput
 }
-func GetItenary(id_itenary, voyage_number, load_time, unload_time int, unload_location, load_location string) string {
+func GetItenary(voyage_number int, unload_location, load_location string) string {
 	var GetItenary string
 	db := dbcon()
 	selDb, err := db.Query("SELECT * FROM t_mtr_itenary ORDER BY id_itenary ASC")
@@ -76,6 +76,6 @@ func GetItenary(id_itenary, voyage_number, load_time, unload_time int, unload_lo
 		//res = append(res, emp)
 	}
 	defer db.Close()
-	GetItenary = fmt.Sprintf("%T %T %T %T %T %T", id_itenary, voyage_number, unload_location, load_location, load_time, unload_time)
+	GetItenary = fmt.Sprintf("%T %T %T ", voyage_number, unload_location, load_location)
 	return GetItenary
 }
