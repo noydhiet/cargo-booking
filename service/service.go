@@ -1,11 +1,22 @@
 package service
 
 import (
-	fmt "fmt"
+	"database/sql"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
-func HelloWorld(name string) string {
-	var helloOutput string
-	helloOutput = fmt.Sprintf("Hello, %s ", name)
-	return helloOutput
+func dbConn() (db *sql.DB) {
+	dbDriver := "mysql"
+	dbUser := "root"
+	dbPass := "PASSWORD"
+	dbName := "db_go"
+	dbIp := "192.168.20.9"
+	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@tcp("+dbIp+")/"+dbName)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	return db
 }

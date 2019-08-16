@@ -10,5 +10,3 @@ type GetRouteResponse struct {
 	DESTINATION string `json:"destination"`
 	DURATION    int    `json:"duration"`
 }
-
-
