@@ -101,10 +101,10 @@ func call_ServiceGetItenary(voyage_number int, unload_location, load_location st
 func makeGetItenaryEndpoint(aph AphService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(datastruct.GetItenaryRequest)
-		logging.Log(fmt.Sprintf("Name Request %s", req.VOYAGE_NUMBER, req.UNLOAD_LOCATION, req.LOAD_LOCATION))
+		//logging.Log(fmt.Sprintf("Name Request %s", req.VOYAGE_NUMBER, req.UNLOAD_LOCATION, req.LOAD_LOCATION))
 		k := aph.GetItenaryService(ctx, req.VOYAGE_NUMBER, req.UNLOAD_LOCATION, req.LOAD_LOCATION)
-		logging.Log(fmt.Sprintf("Response Final Message %s", k))
-		return datastruct.GetItenaryResponse{k}, nil
+		//logging.Log(fmt.Sprintf("Response Final Message %s", k))
+		return datastruct.GetItenaryResponse{200, k}, nil
 	}
 }
 func decodeGetItenaryRequest(_ context.Context, r *http.Request) (interface{}, error) {

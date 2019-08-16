@@ -26,6 +26,7 @@ type GetItenaryRequest struct {
 }
 
 type GetItenaryResponse struct {
+	STATUS          int    `json:"code`
 	LOAD_LOCATION   string `json:"load_location`
 	UNLOAD_LOCATION string `json:"unload_location"`
 	VOYAGE_NUMBER   int    `json:"voyage_number"`
