@@ -1,7 +1,7 @@
 package service
 
 import (
-	"cargo-booking/datastruct"
+	dt "cargo-booking/datastruct"
 	"database/sql"
 	"fmt"
 )
@@ -49,18 +49,17 @@ func HelloDaerah(name, jenis_kelamin, asal_kota string) string {
 	helloOutput = fmt.Sprintf("%s %s %s", asal_kota, jenis_kelamin, name)
 	return helloOutput
 }
-func GetItenary(voyage_number int, unload_location, load_location string) string {
-	var GetItenary string
+func GetItenary(tam dt.Tampil) []dt.Tampil {
 	db := dbcon()
-	selDb, err := db.Query("SELECT * FROM t_mtr_itenary ORDER BY id_itenary ASC")
+	selDb, err := db.Query("SELECT * FROM t_mtr_itenary")
 
 	if err != nil {
 		panic(err.Error())
 	}
 
-	Ez := datastruct.GetItenaryRequest{} //single object employee struct.Created to capture row
+	Ez := dt.Tampil{} //single object employee struct.Created to capture row
 
-	//res := datastruct.GetItenaryResponse{} //array of object Employee.create capture whole
+	res := []dt.Tampil{} //array of object Employee.create capture whole
 
 	for selDb.Next() {
 		var id_itenary, voyage_number, load_time, unload_time int
@@ -72,10 +71,10 @@ func GetItenary(voyage_number int, unload_location, load_location string) string
 		Ez.VOYAGE_NUMBER = voyage_number
 		Ez.LOAD_LOCATION = load_location
 		Ez.UNLOAD_LOCATION = unload_location
-		//println("ID", id, "NAME", name, "CITY", city)
-		//res = append(res, emp)
+		Ez.UNLOAD_TIME = unload_time
+		Ez.LOAD_TIME = load_time
+		Ez.ID_ITENARY = id_itenary
+		res = append(res, Ez)
 	}
-	defer db.Close()
-	GetItenary = fmt.Sprintf("%T %T %T ", voyage_number, unload_location, load_location)
-	return GetItenary
+	return res
 }
