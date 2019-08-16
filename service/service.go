@@ -62,18 +62,18 @@ func GetItenary(tam dt.Tampil) []dt.Tampil {
 	res := []dt.Tampil{} //array of object Employee.create capture whole
 
 	for selDb.Next() {
-		var id_itenary, voyage_number, load_time, unload_time int
-		var unload_location, load_location string
-		err = selDb.Scan(&id_itenary, &voyage_number, &unload_location, &load_location, &load_time, &unload_time)
+		var iditenary, voyagenumber, loadtime, unloadtime int
+		var unloadlocation, loadlocation string
+		err = selDb.Scan(&iditenary, &loadlocation, &unloadlocation, &loadtime, &unloadtime, &voyagenumber)
 		if err != nil {
 			panic(err.Error())
 		}
-		Ez.VOYAGE_NUMBER = voyage_number
-		Ez.LOAD_LOCATION = load_location
-		Ez.UNLOAD_LOCATION = unload_location
-		Ez.UNLOAD_TIME = unload_time
-		Ez.LOAD_TIME = load_time
-		Ez.ID_ITENARY = id_itenary
+		Ez.ID_ITENARY = iditenary
+		Ez.LOAD_LOCATION = loadlocation
+		Ez.UNLOAD_LOCATION = unloadlocation
+		Ez.UNLOAD_TIME = unloadtime
+		Ez.LOAD_TIME = loadtime
+		Ez.VOYAGE_NUMBER = voyagenumber
 		res = append(res, Ez)
 	}
 	return res

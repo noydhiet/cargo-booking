@@ -38,7 +38,7 @@ type Tampil struct {
 	ID_ITENARY      int
 	LOAD_LOCATION   string
 	UNLOAD_LOCATION string
-	VOYAGE_NUMBER   int
 	LOAD_TIME       int
 	UNLOAD_TIME     int
+	VOYAGE_NUMBER   int
 }
