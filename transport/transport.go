@@ -1,53 +1,56 @@
 package transport
 
 import (
+	"cargo-booking/datastruct"
+	dt "cargo-booking/datastruct"
+	svc "cargo-booking/service"
 	"context"
 	"encoding/json"
-	"errors"
-	"fmt"
-	"net/http"
+	"log"
 
-	"golang-service2/datastruct"
-	"golang-service2/logging"
-	"golang-service2/service"
+	//"kit/endpoint"
+	"net/http"
 
 	"github.com/go-kit/kit/endpoint"
 	httptransport "github.com/go-kit/kit/transport/http"
 )
 
 type AphService interface {
-	HelloWorldService(context.Context, string) string
+	GetRouteService(context.Context, dt.Route) []dt.Route
 }
 
-type aphService struct{}
-
-var ErrEmpty = errors.New("empty string")
-
-func (aphService) HelloWorldService(_ context.Context, name string) string {
-
-	return call_ServiceHelloWorld(name)
+type aphService struct {
 }
 
-func call_ServiceHelloWorld(name string) string {
-
-	messageResponse := service.HelloWorld(name)
-
-	return messageResponse
-
+func (aphService) GetRouteService(_ context.Context, del dt.Route) []dt.Route {
+	return call_ServiceGetRouteService(del)
 }
 
-func makeHelloWorldEndpoint(aph AphService) endpoint.Endpoint {
+func call_ServiceGetRouteService(del dt.Route) []dt.Route {
+	retDel := svc.GetRoute(del)
+
+	return retDel
+}
+
+func makeGetRouteEndpoint(aph AphService) endpoint.Endpoint {
+	log.Println("Process")
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(datastruct.HelloWorldRequest)
-		logging.Log(fmt.Sprintf("Name Request %s", req.NAME))
-		v := aph.HelloWorldService(ctx, req.NAME)
-		logging.Log(fmt.Sprintf("Response Final Message %s", v))
-		return datastruct.HelloWorldResponse{v}, nil
+		req := request.(datastruct.GetRouteRequest)
+		paramDel := dt.Route{}
+		paramDel.Origin = req.ORIGIN
+		paramDel.Destination = req.DESTINATION
+		aph.GetRouteService(ctx, paramDel)
+		return datastruct.GetRouteResponse{
+			Id_route_spec: 1,
+			Origin:        "Jakarta",
+			Destination:   "Bandung",
+			Duration:      10,
+		}, nil
 	}
 }
 
-func decodeHelloWorldRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	var request datastruct.HelloWorldRequest
+func decodeGetRouteRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	var request datastruct.GetRouteRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		return nil, err
 	}
@@ -61,11 +64,12 @@ func encodeResponse(_ context.Context, w http.ResponseWriter, response interface
 func RegisterHttpsServicesAndStartListener() {
 	aph := aphService{}
 
-	HelloWorldHandler := httptransport.NewServer(
-		makeHelloWorldEndpoint(aph),
-		decodeHelloWorldRequest,
+	GetRouteHandler := httptransport.NewServer(
+		makeGetRouteEndpoint(aph),
+		decodeGetRouteRequest,
 		encodeResponse,
 	)
+	//url path of our API service
+	http.Handle("/GetRoute", GetRouteHandler)
 
-	http.Handle("/HelloWorld", HelloWorldHandler)
 }
