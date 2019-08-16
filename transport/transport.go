@@ -1,53 +1,65 @@
 package transport
 
 import (
+	dt "cargo-booking/datastruct"
+	svc "cargo-booking/service"
 	"context"
 	"encoding/json"
-	"errors"
-	"fmt"
+	"log"
+
+	//"kit/endpoint"
 	"net/http"
-
-	"golang-service2/datastruct"
-	"golang-service2/logging"
-	"golang-service2/service"
-
+	_ "github.com/go-sql-driver/mysql" 
 	"github.com/go-kit/kit/endpoint"
 	httptransport "github.com/go-kit/kit/transport/http"
 )
 
 type AphService interface {
-	HelloWorldService(context.Context, string) string
+	GetStatusDeliveryService(context.Context, dt.Delivery) []dt.Delivery
 }
 
-type aphService struct{}
-
-var ErrEmpty = errors.New("empty string")
-
-func (aphService) HelloWorldService(_ context.Context, name string) string {
-
-	return call_ServiceHelloWorld(name)
+type aphService struct {
 }
 
-func call_ServiceHelloWorld(name string) string {
-
-	messageResponse := service.HelloWorld(name)
-
-	return messageResponse
-
+func (aphService) GetBookingService(_ context.Context, del dt.Delivery) []dt.Delivery {
+	return call_ServiceBookingService(del)
 }
 
-func makeHelloWorldEndpoint(aph AphService) endpoint.Endpoint {
+func call_ServiceBookingService(del dt.Delivery) []dt.Delivery {
+	retDel := svc.InsertDelivery(del)
+
+	return retDel
+}
+
+func makeBookingEndpoint(aph AphService) endpoint.Endpoint {
+	log.Println("Process")
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(datastruct.HelloWorldRequest)
-		logging.Log(fmt.Sprintf("Name Request %s", req.NAME))
-		v := aph.HelloWorldService(ctx, req.NAME)
-		logging.Log(fmt.Sprintf("Response Final Message %s", v))
-		return datastruct.HelloWorldResponse{v}, nil
+		req := request.(dt.GetBookingRequest)
+		paramDel := dt.Delivery{}
+		paramDel.ID_DELIVERY = req.ID_DELIVERY
+		paramDel.ROUTING_STATUS = req.ROUTING_STATUS
+		paramDel.TRANSPORT_STATUS = req.TRANSPORT_STATUS
+		paramDel.LAST_KNOWN_LOCATION = req.LAST_KNOWN_LOCATION
+		paramDel.ID_ITENARY = req.ID_ITENARY
+		paramDel.ID_ROUTE = req.ID_ROUTE_SPEC
+		aph.GetStatusDeliveryService(ctx, paramDel)
+		return dt.GetBookingResponse{
+			// ID_DELIVERY:         1,
+			// ROUTE_ID:            1,
+			// ITENARY_ID:          1,
+			// ROUTING_STATUS:      "unload",
+			// TRANSPORT_STATUS:    "inport",
+			// LAST_KNOWN_LOCATION: "surabaya",
+			// RESPONSE_CODE:       200,
+			// RESPONSE_DESC:       "Success",
+
+			MESSAGE: "Succes",
+		}, nil
 	}
 }
 
-func decodeHelloWorldRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	var request datastruct.HelloWorldRequest
+func decodeBookingRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	var request dt.GetBookingRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		return nil, err
 	}
@@ -58,14 +70,18 @@ func encodeResponse(_ context.Context, w http.ResponseWriter, response interface
 	return json.NewEncoder(w).Encode(response)
 }
 
+
+
+
 func RegisterHttpsServicesAndStartListener() {
 	aph := aphService{}
 
-	HelloWorldHandler := httptransport.NewServer(
-		makeHelloWorldEndpoint(aph),
-		decodeHelloWorldRequest,
+	GetBookingHandler := httptransport.NewServer(
+		makeBookingEndpoint(aph),
+		decodeBookingRequest,
 		encodeResponse,
 	)
+	//url path of our API service
+	http.Handle("/bookingcargo", GetBookingHandler)
 
-	http.Handle("/HelloWorld", HelloWorldHandler)
 }
