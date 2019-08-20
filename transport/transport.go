@@ -37,14 +37,14 @@ func makeGetRouteEndpoint(aph AphService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(datastruct.GetRouteRequest)
 		paramDel := dt.Route{}
-		paramDel.Origin = req.ORIGIN
-		paramDel.Destination = req.DESTINATION
+		paramDel.ORIGIN = req.ORIGIN
+		paramDel.DESTINATION = req.DESTINATION
 		aph.GetRouteService(ctx, paramDel)
 		return datastruct.GetRouteResponse{
-			Id_route_spec: 1,
-			Origin:        "Jakarta",
-			Destination:   "Bandung",
-			Duration:      10,
+			ID_ROUTE_SPEC: 1,
+			ORIGIN:        "Jakarta",
+			DESTINATION:   "Surabaya",
+			DURATION:      10,
 		}, nil
 	}
 }

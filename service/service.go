@@ -5,8 +5,9 @@ import (
 
 	"os"
 
-	// _ "github.com/go-sql-driver/mysql"
 	dt "cargo-booking/datastruct"
+
+	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/go-kit/kit/log"
 )
@@ -14,11 +15,11 @@ import (
 func dbConn() (db *sql.DB) {
 	dbDriver := "mysql"
 	dbUser := "root"
-	dbPass := "PASSWORD"
+	dbPass := ""
 	dbName := "db_go"
-	dbIp := "192.168.20.9"
+	dbIp := "127.0.0.1:3306"
 	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@tcp("+dbIp+")/"+dbName)
-
+	// db, err := sql.Open("mysql", "root: @tcp(127.0.0.1)/db_go")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -30,7 +31,7 @@ func GetRoute(del dt.Route) []dt.Route {
 	logger := log.NewLogfmtLogger(os.Stdout)
 	logger.Log("Checking Database")
 	db := dbConn()
-	selDB, err := db.Query("SELECT * FROM t_mtr_route_spec where route_id = ?", del.Id_route_spec)
+	selDB, err := db.Query("SELECT * FROM t_mtr_spec where id_route_spec = ?", del.ID_ROUTE_SPEC)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -44,10 +45,10 @@ func GetRoute(del dt.Route) []dt.Route {
 		if err != nil {
 			panic(err.Error())
 		}
-		delv.Id_route_spec = id_route_spec
-		delv.Duration = duration
-		delv.Origin = origin
-		delv.Destination = destination
+		delv.ID_ROUTE_SPEC = id_route_spec
+		delv.DURATION = duration
+		delv.ORIGIN = origin
+		delv.DESTINATION = destination
 		res = append(res, delv)
 	}
 
