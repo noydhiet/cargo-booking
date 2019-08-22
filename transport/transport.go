@@ -110,12 +110,12 @@ func makeGetItenaryEndpoint(aph AphService) endpoint.Endpoint {
 		bismillah.LOAD_LOCATION = req.LOAD_LOCATION
 		aph.GetItenaryService(ctx, bismillah)
 		return datastruct.GetItenaryResponse{
-			// ID_ITENARY:      ID_ITENARY,
-			// LOAD_LOCATION:   load_location,
-			// UNLOAD_LOCATION: unload_location,
-			// VOYAGE_NUMBER:   voyage_number,
-			// LOAD_TIME:       load_time,
-			// UNLOAD_TIME:     unload_time,
+			// ID_ITENARY:      1,
+			// LOAD_LOCATION:   "Tanjung Priok",
+			// UNLOAD_LOCATION: "Surabaya",
+			// VOYAGE_NUMBER:   1234,
+			// LOAD_TIME:       360,
+			// UNLOAD_TIME:     360,
 		}, nil
 	}
 }
